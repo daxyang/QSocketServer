@@ -1,0 +1,11 @@
+1) 这是网络服务器通讯类；
+2) 有两个缓冲区: 接受缓冲区 recv_buffer和发送缓冲区send_buffer;
+3) 线程run_recv_cmd从网络中接受到数据后，将数据存入在接受缓冲区中；
+4) 线程run_cmd_process对接受缓冲中的数据进行解析：
+    a) 解析出cmdtype,cmdsubtype以及包的数据(不含头)及长度(head->Length - NET_HEAD_SIZE);
+    b) 调用do_cmd_process函数，该函数按cmdtype进行命令分发；
+        i) 如果是NET_TCP_TYPE_CTRL则调用do_ctrl_process函数；
+            ＝> 通过cmdtype和cmdsubtype在二维链表中查找出对应的命令处理函数，进行调用；命令处理函数将
+            应答命令放在发送缓冲区中send_buffer中;
+        ii) 如果是NET_TCP_TYPE_FILE,则调用
+5) 线程run_send_cmd从发送缓冲区send_buffer取出数据，进行发送；

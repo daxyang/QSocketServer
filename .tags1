@@ -1,0 +1,34 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	0	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+time_cnt	/Users/qianzhengyang/QSocketServer/sockcmd_treasmit.cpp	/^int time_cnt;$/;"	variable	line:2
+sockcmd_treasmit	/Users/qianzhengyang/QSocketServer/sockcmd_treasmit.cpp	/^sockcmd_treasmit::sockcmd_treasmit()$/;"	function	line:5	class:sockcmd_treasmit	signature:()
+sockcmd_treasmit	/Users/qianzhengyang/QSocketServer/sockcmd_treasmit.cpp	/^sockcmd_treasmit::sockcmd_treasmit(int sock)$/;"	function	line:10	class:sockcmd_treasmit	signature:(int sock)
+~sockcmd_treasmit	/Users/qianzhengyang/QSocketServer/sockcmd_treasmit.cpp	/^sockcmd_treasmit::~sockcmd_treasmit()$/;"	function	line:16	class:sockcmd_treasmit	signature:()
+set_socket	/Users/qianzhengyang/QSocketServer/sockcmd_treasmit.cpp	/^void sockcmd_treasmit::set_socket(int sock)$/;"	function	line:20	class:sockcmd_treasmit	signature:(int sock)
+init_cmd	/Users/qianzhengyang/QSocketServer/sockcmd_treasmit.cpp	/^void sockcmd_treasmit::init_cmd()$/;"	function	line:29	class:sockcmd_treasmit	signature:()
+search_subcmd_type	/Users/qianzhengyang/QSocketServer/sockcmd_treasmit.cpp	/^struct sub_cmd_link_t *sockcmd_treasmit::search_subcmd_type(u16 cmd_type,u32 sub_cmd_type)$/;"	function	line:109	class:sockcmd_treasmit	signature:(u16 cmd_type,u32 sub_cmd_type)
+append_sub_cmd_link	/Users/qianzhengyang/QSocketServer/sockcmd_treasmit.cpp	/^void sockcmd_treasmit::append_sub_cmd_link(u16 cmd_type,struct sub_cmd_link_t *sub_cmd_link)$/;"	function	line:129	class:sockcmd_treasmit	signature:(u16 cmd_type,struct sub_cmd_link_t *sub_cmd_link)
+append_cmd_link	/Users/qianzhengyang/QSocketServer/sockcmd_treasmit.cpp	/^void sockcmd_treasmit::append_cmd_link(u16 cmdtype)$/;"	function	line:147	class:sockcmd_treasmit	signature:(u16 cmdtype)
+search_head_subcmd_link	/Users/qianzhengyang/QSocketServer/sockcmd_treasmit.cpp	/^struct sub_cmd_link_t *sockcmd_treasmit::search_head_subcmd_link(u16 cmd_type)$/;"	function	line:176	class:sockcmd_treasmit	signature:(u16 cmd_type)
+start_treasmit	/Users/qianzhengyang/QSocketServer/sockcmd_treasmit.cpp	/^void sockcmd_treasmit::start_treasmit()$/;"	function	line:194	class:sockcmd_treasmit	signature:()
+start_recv	/Users/qianzhengyang/QSocketServer/sockcmd_treasmit.cpp	/^void sockcmd_treasmit::start_recv()$/;"	function	line:205	class:sockcmd_treasmit	signature:()
+start_send	/Users/qianzhengyang/QSocketServer/sockcmd_treasmit.cpp	/^void sockcmd_treasmit::start_send()$/;"	function	line:228	class:sockcmd_treasmit	signature:()
+bound	/Users/qianzhengyang/QSocketServer/sockcmd_treasmit.cpp	/^void sockcmd_treasmit::bound(QSlidingWindow *sliding_wnd)$/;"	function	line:244	class:sockcmd_treasmit	signature:(QSlidingWindow *sliding_wnd)
+run_send_cmd	/Users/qianzhengyang/QSocketServer/sockcmd_treasmit.cpp	/^void *sockcmd_treasmit::run_send_cmd(void *ptr)$/;"	function	line:251	class:sockcmd_treasmit	signature:(void *ptr)
+run_recv_cmd	/Users/qianzhengyang/QSocketServer/sockcmd_treasmit.cpp	/^void *sockcmd_treasmit::run_recv_cmd(void *ptr)$/;"	function	line:282	class:sockcmd_treasmit	signature:(void *ptr)
+run_cmd_process	/Users/qianzhengyang/QSocketServer/sockcmd_treasmit.cpp	/^void *sockcmd_treasmit::run_cmd_process(void *ptr)$/;"	function	line:358	class:sockcmd_treasmit	signature:(void *ptr)
+do_cmd_process	/Users/qianzhengyang/QSocketServer/sockcmd_treasmit.cpp	/^void sockcmd_treasmit::do_cmd_process(u16 cmdtype,u32 cmdsubtype,u32 len,char *data)$/;"	function	line:392	class:sockcmd_treasmit	signature:(u16 cmdtype,u32 cmdsubtype,u32 len,char *data)
+do_ctrl_process	/Users/qianzhengyang/QSocketServer/sockcmd_treasmit.cpp	/^void sockcmd_treasmit::do_ctrl_process(u32 cmdsubtype,u32 len,char *data)$/;"	function	line:419	class:sockcmd_treasmit	signature:(u32 cmdsubtype,u32 len,char *data)
+do_file_process	/Users/qianzhengyang/QSocketServer/sockcmd_treasmit.cpp	/^void sockcmd_treasmit::do_file_process(u32 subcmdtype,u32 len,char *data)$/;"	function	line:458	class:sockcmd_treasmit	signature:(u32 subcmdtype,u32 len,char *data)
+READ	/Users/qianzhengyang/QSocketServer/sockcmd_treasmit.cpp	/^int READ(int sk, char *buf, int len)$/;"	function	line:498	signature:(int sk, char *buf, int len)
+WRITE	/Users/qianzhengyang/QSocketServer/sockcmd_treasmit.cpp	/^int WRITE(int sk, char *buf, int len)$/;"	function	line:522	signature:(int sk, char *buf, int len)
+logout_ack	/Users/qianzhengyang/QSocketServer/sockcmd_treasmit.cpp	/^void sockcmd_treasmit::logout_ack(void *ptr)$/;"	function	line:543	class:sockcmd_treasmit	signature:(void *ptr)
+filelist_ack	/Users/qianzhengyang/QSocketServer/sockcmd_treasmit.cpp	/^void sockcmd_treasmit::filelist_ack(void *ptr)$/;"	function	line:563	class:sockcmd_treasmit	signature:(void *ptr)
+filesend_ack	/Users/qianzhengyang/QSocketServer/sockcmd_treasmit.cpp	/^ void sockcmd_treasmit::filesend_ack(void *ptr)$/;"	function	line:586	class:sockcmd_treasmit	signature:(void *ptr)
+filepath_ack	/Users/qianzhengyang/QSocketServer/sockcmd_treasmit.cpp	/^void sockcmd_treasmit::filepath_ack(void *ptr)$/;"	function	line:613	class:sockcmd_treasmit	signature:(void *ptr)
+heart_ack	/Users/qianzhengyang/QSocketServer/sockcmd_treasmit.cpp	/^void sockcmd_treasmit::heart_ack(void *ptr)$/;"	function	line:661	class:sockcmd_treasmit	signature:(void *ptr)
+start	/Users/qianzhengyang/QSocketServer/sockcmd_treasmit.cpp	/^void sockcmd_treasmit::start()$/;"	function	line:682	class:sockcmd_treasmit	signature:()
