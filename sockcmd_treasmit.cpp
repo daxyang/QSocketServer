@@ -287,7 +287,7 @@ void *sockcmd_treasmit::run_recv_cmd(void *ptr)
     while(pthis->quite == 0)
     {
         struct timeval tv;
-        tv.tv_sec = 2;
+        tv.tv_sec = 5;
         tv.tv_usec = 0;
         fd_set set,reset;
         FD_ZERO(&set);
@@ -295,16 +295,17 @@ void *sockcmd_treasmit::run_recv_cmd(void *ptr)
 
         FD_ZERO(&reset);
         FD_SET(pthis->socket,&reset);
-        int ret = select(pthis->socket + 1,&set,NULL,&reset,&tv);
-        
-        if(ret == 0)
+        int ret = select(pthis->socket + 1,&set,NULL,NULL,&tv);
+
+        if(ret <= 0)
         {
             printf("select over timer! %d\n",getpid());
-            //pthis->quite = 1;
-            //usleep(100000);
-            //close(pthis->socket);
-            //exit(0);
+            pthis->quite = 1;
+          //  usleep(100000);
+            close(pthis->socket);
+            exit(0);
             //return NULL;
+
         }
 
         //接受到头信息
