@@ -4,6 +4,15 @@
 #include "qsocketserver_global.h"
 #include "sockcmd_treasmit.h"
 #include "pthread.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+#include "log_function.h"
+#ifdef __cplusplus
+}
+#endif
+
 #define ERR_EXIT(m) \
     do { \
         perror(m); \

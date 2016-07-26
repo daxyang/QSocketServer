@@ -34,6 +34,8 @@ typedef  unsigned long long u64;
 #define NET_FILE_START       0x0002
 #define NET_FILE_PATH        0x0003
 #define NET_FILE_SEND        0x0004
+#define NET_FILE_NAME        0x0005
+
 
 
 typedef struct app_net_head_pkg_t
@@ -148,7 +150,7 @@ typedef struct
 
 typedef struct
 {
-        char filename[64];
+        char filename[1024];
         u32 Rev1;
 }app_net_file_start_read;
 
@@ -186,5 +188,17 @@ typedef struct
         u8 Rev1;
         u16 Rev2;
 }app_net_ctrl_ack_heart;
+
+typedef struct
+{
+		char filename[64];
+		u32 Rev1;
+}app_net_file_set_fileame;
+
+typedef struct
+{
+    u16 state;
+	  u16 Rev1;
+}app_net_file_ack_set_filename;
 
 #endif // NET_PROROCAL

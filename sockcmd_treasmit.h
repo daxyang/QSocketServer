@@ -6,6 +6,15 @@
 #include "pthread.h"
 #include "errno.h"
 #include "sys/time.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+#include "log_function.h"
+#ifdef __cplusplus
+}
+#endif
+
 #define SEND_USER  1
 #define RECV_USER  2
 #define CMD_BUFFER_LEN  (2*1024*1024)
@@ -29,6 +38,8 @@ private:
 
     FILE *file;
     char *filepath;
+    char *filename;
+    char *fullname;
   //  static sockcmd_treasmit *sock_pthis;
 
     static void *run_send_cmd(void *ptr);
@@ -61,6 +72,8 @@ private:
     static void filelist_ack(void *ptr);
     static void filesend_ack(void *ptr);
     static void filepath_ack(void *ptr);
+    static void filename_ack(void *ptr);
+    static void filestart_ack(void *ptr);
     /*
     static void xxxx_ack(void *ptr);
      */

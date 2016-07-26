@@ -9,6 +9,7 @@ void reaper(int sig)
 
 QSocketServer::QSocketServer()
 {
+
 }
 int QSocketServer::login(int socket)
 {
@@ -52,7 +53,7 @@ int QSocketServer::login(int socket)
 }
 void QSocketServer::sock_init()
 {
-
+    set_log_file("/tmp/log_server.txt");
     bzero(&server_addr,sizeof(server_addr));
     server_addr.sin_family = AF_INET;
     server_addr.sin_addr.s_addr = htons(INADDR_ANY);
@@ -60,22 +61,22 @@ void QSocketServer::sock_init()
 
     server_socket = socket(AF_INET,SOCK_STREAM,0);
     if( server_socket < 0){
-        printf("Create Socket Failed!");
+        LOG0_ERROR("Create Socket Failed!\n");
         exit(1);
     }
 
     if( bind(server_socket,(struct sockaddr*)&server_addr,sizeof(server_addr))){
-        printf("Server Bind Port : %d Failed!", HELLO_WORLD_SERVER_PORT);
+        LOG1_ERROR("Server Bind Port : %d Failed!", HELLO_WORLD_SERVER_PORT);
         exit(1);
     }
 
     fprintf(stderr,"Before Main Process listen.\n");
     if ( listen(server_socket, LENGTH_OF_LISTEN_QUEUE) ){
-        printf("Server Listen Failed!");
+        LOG0_ERROR("Server Listen Failed!");
         exit(1);
     }
-    fprintf(stderr, "After Main Process listen.\n");
-
+    //LOG0_INFO("After Main Process Listen.\n");
+    printf("After Main Process Listen.\n");
 }
 /*
  * 服务器端处理线程
@@ -97,7 +98,7 @@ void *QSocketServer::server_run(void *ptr)
         if ( new_client_socket < 0){
             if(errno == EINTR)
             {
-              printf("Server Accept Failed!\n");
+              LOG0_WARING("Server Accept Failed!\n");
               usleep(10000);
               continue;
           }
@@ -105,12 +106,16 @@ void *QSocketServer::server_run(void *ptr)
             break;  //注意，一定用break;
         }
 
-        fprintf(stderr,"After accept. In %d socket:%d.\n",getpid(),new_client_socket);
+        printf("After accept. In  socket:.\n");
         if(pthis->login(new_client_socket) == 0)
         {
           int pid = fork();
           if(pid == -1)
+          {
+            LOG0_ERROR("fork error\n");
             ERR_EXIT("fork error\n");
+
+          }
           else if(pid == 0)
           {
             close(pthis->server_socket);

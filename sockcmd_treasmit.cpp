@@ -10,7 +10,8 @@ sockcmd_treasmit::sockcmd_treasmit()
 sockcmd_treasmit::sockcmd_treasmit(int sock)
 {
     socket = sock;
-    file = fopen("/home/qianzhengyang/nfs/test.mp4","r");
+    //file = fopen("/home/qianzhengyang/nfs/test.mp4","r");
+    //LOG0_INFO("/home/qianzhengyang/nfs/test.mp4");
 }
 
 sockcmd_treasmit::~sockcmd_treasmit()
@@ -82,6 +83,20 @@ void sockcmd_treasmit::init_cmd()
     sub_cmd_filepath->next = NULL;
     append_sub_cmd_link(NET_TCP_TYPE_FILE,sub_cmd_filepath);
 
+    struct sub_cmd_link_t *sub_cmd_filename = new struct sub_cmd_link_t;
+    sub_cmd_filename-> no = NET_FILE_NAME;
+    sub_cmd_filename->cmd_sub_type = NET_FILE_NAME;
+    sub_cmd_filename->callback = this->filename_ack;
+    sub_cmd_filename->next = NULL;
+    append_sub_cmd_link(NET_TCP_TYPE_FILE,sub_cmd_filename);
+
+    struct sub_cmd_link_t *sub_cmd_filestart = new struct sub_cmd_link_t;
+    sub_cmd_filestart-> no = NET_FILE_START;
+    sub_cmd_filestart->cmd_sub_type = NET_FILE_START;
+    sub_cmd_filestart->callback = this->filestart_ack;
+    sub_cmd_filestart->next = NULL;
+    append_sub_cmd_link(NET_TCP_TYPE_FILE,sub_cmd_filestart);
+
     /*
      * 添加新的协义(例)
      struct sub_cmd_link_t *sub_cmd_newname = new struct sub_cmd_link_t;
@@ -94,6 +109,7 @@ void sockcmd_treasmit::init_cmd()
 
     struct sub_cmd_link_t *sub_head = search_head_subcmd_link(NET_TCP_TYPE_CTRL);
     printf("cmd sub num:%d \n",sub_head->no);
+    LOG1_INFO("cmd sub num:%d \n",sub_head->no);
     struct sub_cmd_link_t *p1;
     p1 = sub_head->next;
     for(int i = 0;i < sub_head->no;i++)
@@ -112,7 +128,9 @@ struct sub_cmd_link_t *sockcmd_treasmit::search_subcmd_type(u16 cmd_type,u32 sub
     struct sub_cmd_link_t *head_subcmd;
     head_subcmd = search_head_subcmd_link(cmd_type);
     if(head_subcmd == NULL)
-        printf("head_subcmd is NULL\n");
+    {
+        LOG0_INFO("head_subcmd is NULL\n");
+    }
 
     p1 = head_subcmd->next;
     for(int i = 0;i < head_subcmd->no;i++)
@@ -250,7 +268,8 @@ void sockcmd_treasmit::bound(QSlidingWindow *sliding_wnd)
  */
 void *sockcmd_treasmit::run_send_cmd(void *ptr)
 {
-    printf("send pthread start!\n");
+    //printf("send pthread start!\n");
+    LOG0_INFO("send pthread start!\n");
     sockcmd_treasmit *pthis = (sockcmd_treasmit *)ptr;
     char *buffer = (char *)malloc(sizeof(char) * 1024 * 1024);
     pthis->consume_send->read_init();
@@ -281,11 +300,13 @@ void *sockcmd_treasmit::run_send_cmd(void *ptr)
  */
 void *sockcmd_treasmit::run_recv_cmd(void *ptr)
 {
-    printf("receive pthread start!\n");
+    //printf("receive pthread start!\n");
+    LOG0_INFO("Reveive pthread start!\n");
     sockcmd_treasmit *pthis = (sockcmd_treasmit *)ptr;
 
     while(pthis->quite == 0)
     {
+      /*  //delete by antony 2016-7-19
         struct timeval tv;
         tv.tv_sec = 5;
         tv.tv_usec = 0;
@@ -307,14 +328,15 @@ void *sockcmd_treasmit::run_recv_cmd(void *ptr)
             //return NULL;
 
         }
-
+        */
         //接受到头信息
         char *head_buffer = (char *)malloc(sizeof(char) * NET_HEAD_SIZE);
         app_net_head_pkg_t *head = (app_net_head_pkg_t *)head_buffer;
         int rlen = READ(pthis->socket,head_buffer,NET_HEAD_SIZE);
         if(rlen == -1)
         {
-          printf("read data len : 0\n");
+          //printf("read data len : 0\n");
+          LOG0_INFO("read data len : 0\n");
           pthis->quite = 1;
           //usleep(100000);
           //close(pthis->socket);
@@ -328,7 +350,8 @@ void *sockcmd_treasmit::run_recv_cmd(void *ptr)
         rlen = READ(pthis->socket,data_buffer + NET_HEAD_SIZE,len - NET_HEAD_SIZE);
         if(rlen == -1)
         {
-          printf("read data len : 0\n");
+          //printf("read data len : 0\n");
+          LOG0_INFO("read data len:0\n");
           pthis->quite = 1;
           //usleep(100000);
           //close(pthis->socket);
@@ -358,7 +381,8 @@ void *sockcmd_treasmit::run_recv_cmd(void *ptr)
  */
 void *sockcmd_treasmit::run_cmd_process(void *ptr)
 {
-      printf("cmd_process pthread start!\n");
+      //printf("cmd_process pthread start!\n");
+      LOG0_INFO("cmd_process pthread start!\n");
       sockcmd_treasmit *pthis = (sockcmd_treasmit *)ptr;
       pthis->consume_recv->read_init();
       char *buffer = (char *)malloc(sizeof(char) * 2 * 1024 * 1024);
@@ -437,7 +461,8 @@ void sockcmd_treasmit::do_ctrl_process(u32 cmdsubtype,u32 len,char *data)
       case NET_CTRL_LOGOUT:
       {
           struct sub_cmd_link_t *logout = search_subcmd_type(NET_TCP_TYPE_CTRL,NET_CTRL_LOGOUT);
-          printf("NET_CTRL_LOGOUT\n");
+          //printf("NET_CTRL_LOGOUT\n");
+          LOG0_INFO("NET_CTRL_LOGOUT");
           logout->callback(&cmd);
       }
       break;
@@ -445,6 +470,7 @@ void sockcmd_treasmit::do_ctrl_process(u32 cmdsubtype,u32 len,char *data)
         {
             struct sub_cmd_link_t *heart = search_subcmd_type(NET_TCP_TYPE_CTRL,NET_CTRL_HEART);
             printf("NET_CTRL_HEART:%d\n",getpid());
+            LOG1_INFO("NET_CTRL_HEART:%d\n",getpid());
             heart->callback(&cmd);
         }
       break;
@@ -466,22 +492,41 @@ void sockcmd_treasmit::do_file_process(u32 subcmdtype,u32 len,char *data)
     case NET_FILE_LIST:
     {
         struct sub_cmd_link_t *filelist = search_subcmd_type(NET_TCP_TYPE_FILE,NET_FILE_LIST);
-        printf("NET_FILE_LIST\n");
+        //printf("NET_FILE_LIST\n");
+        LOG0_INFO("NET_FILE_LIST");
         filelist->callback(&cmd);
     }
     break;
     case NET_FILE_SEND:
     {
         struct sub_cmd_link_t *filesend = search_subcmd_type(NET_TCP_TYPE_FILE,NET_FILE_SEND);
-        printf("NET_FILE_SEND\n");
+        //printf("NET_FILE_SEND\n");
+        LOG0_INFO("NET_FILE_SEND\n");
         filesend->callback(&cmd);
     }
     break;
     case NET_FILE_PATH:
     {
         struct sub_cmd_link_t *filepath = search_subcmd_type(NET_TCP_TYPE_FILE,NET_FILE_PATH);
-        printf("NET_FILE_PATH\n");
+        //printf("NET_FILE_PATH\n");
+        LOG0_INFO("NET_FILE_PATH\n");
         filepath->callback(&cmd);
+    }
+    break;
+    case NET_FILE_NAME:
+    {
+        struct sub_cmd_link_t *filename = search_subcmd_type(NET_TCP_TYPE_FILE,NET_FILE_NAME);
+        //printf("NET_FILE_PATH\n");
+        LOG0_INFO("NET_FILE_NAME\n");
+        filename->callback(&cmd);
+    }
+    break;
+    case NET_FILE_START:
+    {
+      struct sub_cmd_link_t *filestart = search_subcmd_type(NET_TCP_TYPE_FILE,NET_FILE_START);
+      //printf("NET_FILE_PATH\n");
+      LOG0_INFO("NET_FILE_START\n");
+      filestart->callback(&cmd);
     }
     break;
   }
@@ -501,12 +546,37 @@ int READ(int sk, char *buf, int len)
     int ret;
     int left = len;
     int pos = 0;
+    //add by antony 2016-7-19  ==>
+    int error;
+    socklen_t sock_len = sizeof(struct timeval);
 
+    struct timeval tv;
+    tv.tv_sec = 5;
+    tv.tv_usec = 0;
+    int result = setsockopt(sk,SOL_SOCKET,SO_RCVTIMEO,(char *)&tv,sizeof(struct timeval));
+    if(result < 0)
+    {
+      //perror("set recv socket opt time out:");
+      LOG0_ERROR("set recv socket opt time out.\n");
+      exit(1);
+    }
+    //<==
     while (left > 0)
     {
         if((ret = recv(sk,&buf[pos], left,0))<0)
         {
-            printf("read data failed!ret,left: %d,%d,%s\n",ret,left,strerror(errno));
+            // add by antony 2016-7-19
+            // add socket status ==>
+            getsockopt(sk,SOL_SOCKET,SO_ERROR,&error,&sock_len);
+            if(error == 0)
+            {
+              //printf("recv failed!\n");
+              LOG0_WARING("recv failed!\n");
+              continue;
+            }
+            //<==
+            //printf("read data failed!ret,left: %d,%d,%s\n",ret,left,strerror(errno));
+            LOG3_WARING("read data failed!ret,left: %d,%d,%s\n",ret,left,(errno));
             return -1;
         }
         if(ret == 0)
@@ -525,12 +595,24 @@ int WRITE(int sk, char *buf, int len)
     int ret;
     int left = len;
     int pos = 0;
-
+    int error;
+    socklen_t sock_len = sizeof(struct timeval);
     while (left > 0)
     {
         if((ret = send(sk,&buf[pos], left,0))<0)
         {
-            printf("write data failed!\n");
+            //add by antony 2016-7-19
+            //add socket status  =>
+            getsockopt(sk,SOL_SOCKET,SO_ERROR,&error,&sock_len);
+            if(error == 0)
+            {
+              //printf("send failed!\n");
+              LOG0_WARING("send failed\n");
+              continue;
+            }
+            //<==
+            //printf("write data failed!\n");
+            LOG0_ERROR("write data failed!\n");
             return -1;
         }
 
@@ -553,7 +635,8 @@ void sockcmd_treasmit::logout_ack(void *ptr)
     ack_logout->state = htons(1);
     HEAD_PKG(head,NET_TCP_TYPE_CTRL,NET_CTRL_LOGOUT,0,pkg_len);
     pthis->slidingwnd_send->write_data_to_buffer(pkg_len,buffer,pthis->frame);
-    printf("logout");
+    //printf("logout");
+    LOG0_USER("LogOut\n");
     free(buffer);
     usleep(20000);
     pthis->quite = 1;
@@ -561,6 +644,9 @@ void sockcmd_treasmit::logout_ack(void *ptr)
 
 
 }
+/*
+ * 获取文件列表的处理协议
+ */
 void sockcmd_treasmit::filelist_ack(void *ptr)
 {
        struct cmd_transmit_t *cmd_ptr = (struct cmd_transmit_t *)ptr;
@@ -584,6 +670,9 @@ void sockcmd_treasmit::filelist_ack(void *ptr)
        free(buffer);
 
  }
+ /*
+  * 文件发送的处理协议
+  */
  void sockcmd_treasmit::filesend_ack(void *ptr)
  {
         struct cmd_transmit_t *cmd_ptr = (struct cmd_transmit_t *)ptr;
@@ -611,27 +700,96 @@ void sockcmd_treasmit::filelist_ack(void *ptr)
         pthis->slidingwnd_send->write_data_to_buffer(pkg_len,buffer,pthis->frame);
         free(buffer);
 }
+/*
+ * 文件路径的协议处理
+ */
 void sockcmd_treasmit::filepath_ack(void *ptr)
 {
-       struct cmd_transmit_t *cmd_ptr = (struct cmd_transmit_t *)ptr;
-       sockcmd_treasmit *pthis = (sockcmd_treasmit *)cmd_ptr->ptr;  //类指针
-       char *data = (char *)cmd_ptr->data; //接受到协议内容(不含头)
-       u32 len = (u32)cmd_ptr->len; //按受到协议的长度
-       //协议分析-->
-       pthis->filepath = (char *)malloc(sizeof(char) * len);
-       strcpy(pthis->filepath,data);
+      struct cmd_transmit_t *cmd_ptr = (struct cmd_transmit_t *)ptr;
+      sockcmd_treasmit *pthis = (sockcmd_treasmit *)cmd_ptr->ptr;  //类指针
+      char *data = (char *)cmd_ptr->data; //接受到协议内容(不含头)
+      u32 len = (u32)cmd_ptr->len; //按受到协议的长度
+      //协议分析-->
+      char *path  = (char *)malloc(sizeof(char) * len);
+      app_net_file_path *path_ptr = (app_net_file_path *)path;
+      strcpy(pthis->filepath,path_ptr->path);
        //<--
-       u32 pkg_len = NET_HEAD_SIZE + sizeof(app_net_file_ack_path);
-       char *buffer = (char *)malloc(sizeof(char) * pkg_len);
-       app_net_head_pkg_t *head = (app_net_head_pkg_t *)buffer;
-       app_net_file_ack_path *path_ack = (app_net_file_ack_path *)(buffer + NET_HEAD_SIZE);
+      u32 pkg_len = NET_HEAD_SIZE + sizeof(app_net_file_ack_path);
+      char *buffer = (char *)malloc(sizeof(char) * pkg_len);
+      app_net_head_pkg_t *head = (app_net_head_pkg_t *)buffer;
+      app_net_file_ack_path *path_ack = (app_net_file_ack_path *)(buffer + NET_HEAD_SIZE);
        //返回值设置 -->
-       path_ack->state = htons(1);
+      path_ack->state = htons(1);
        //<--
-       HEAD_PKG(head,NET_TCP_TYPE_FILE,NET_FILE_PATH,0,pkg_len);
-       pthis->slidingwnd_send->write_data_to_buffer(pkg_len,buffer,pthis->frame);
-       free(buffer);
+      HEAD_PKG(head,NET_TCP_TYPE_FILE,NET_FILE_PATH,0,pkg_len);
+      pthis->slidingwnd_send->write_data_to_buffer(pkg_len,buffer,pthis->frame);
+      free(buffer);
 
+}
+/*
+ * 文件名设定的协议处理
+ */
+void sockcmd_treasmit::filename_ack(void *ptr)
+{
+  struct cmd_transmit_t *cmd_ptr = (struct cmd_transmit_t *)ptr;
+  sockcmd_treasmit *pthis = (sockcmd_treasmit *)cmd_ptr->ptr;
+  char *data = (char *)cmd_ptr->data;
+  u32 len = (u32)cmd_ptr->len;
+  //协议解析  =>
+  char *name = (char *)malloc(sizeof(char) * 64);
+  app_net_file_set_fileame *name_ptr = (app_net_file_set_fileame *)name;
+  strcpy(pthis->filename,name_ptr->filename);
+  u16 stat;
+  pthis->fullname = (char *)malloc(sizeof(char) * 1024);
+  sprintf(pthis->fullname,"%s/%s",pthis->filepath,pthis->filename);
+
+  pthis->file = fopen(pthis->fullname,"r");
+  if(pthis->file == NULL)
+    stat = 1;
+  else
+    {
+      stat = 0;
+      fclose(pthis->file);
+    }
+  free(name);
+  //<=
+  u32 pkg_len = NET_HEAD_SIZE + sizeof(app_net_file_ack_set_filename);
+  char *buffer = (char *)malloc(sizeof(char) * pkg_len);
+  app_net_head_pkg_t *head = (app_net_head_pkg_t *)buffer;
+  app_net_file_ack_set_filename *filename_ack = (app_net_file_ack_set_filename *)(head + NET_HEAD_SIZE);
+  //返回值设值 =>
+  filename_ack->state = htons(stat);
+  //<=
+  HEAD_PKG(head,NET_TCP_TYPE_FILE,NET_FILE_NAME,0,pkg_len);
+  pthis->slidingwnd_send->write_data_to_buffer(pkg_len,buffer,pthis->frame);
+  free(buffer);
+
+}
+void sockcmd_treasmit::filestart_ack(void *ptr)
+{
+  struct cmd_transmit_t *cmd_ptr = (struct cmd_transmit_t *)ptr;
+  sockcmd_treasmit *pthis = (sockcmd_treasmit *)cmd_ptr->ptr;
+  char *data = (char *)cmd_ptr->data;
+  u32 len = (u32)cmd_ptr->len;
+  //协议解析 =>
+  char *start = (char *)malloc(sizeof(char) * len);
+  app_net_file_start_read *start_ptr = (app_net_file_start_read *)start;
+  pthis->file = fopen(start_ptr->filename,"r");
+  //<=
+
+  u32 pkg_len = NET_HEAD_SIZE + sizeof(app_net_file_ack_start_read);
+  char *buffer = (char *)malloc(sizeof(char) * pkg_len);
+  app_net_head_pkg_t *head = (app_net_head_pkg_t *)buffer;
+  app_net_file_ack_start_read *filestart_ack = (app_net_file_ack_start_read *)(head + NET_HEAD_SIZE);
+  //返回值设值 =>
+  fseek(pthis->file,0L,SEEK_END);
+  u32 size = ftell(pthis->file);
+  fseek(pthis->file,0L,0);
+  filestart_ack->file_len = htonl(size);
+  //<=
+  HEAD_PKG(head,NET_TCP_TYPE_FILE,NET_FILE_START,0,pkg_len);
+  pthis->slidingwnd_send->write_data_to_buffer(pkg_len,buffer,pthis->frame);
+  free(buffer);
 }
 /*
  * 添加通讯协议 （4)
@@ -658,6 +816,9 @@ void sockcmd_treasmit::filepath_ack(void *ptr)
         free(buffer);
 
 }
+ */
+/*
+ * 心跳的协议处理
  */
 void sockcmd_treasmit::heart_ack(void *ptr)
 {
